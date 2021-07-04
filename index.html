@@ -5,13 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css">
-    <title>Tag'Omatic PDL</title>
+    <title>Tag'Omatic</title>
 </head>
 
 <body>
     <header>
         <div id="logo">
-            <div id='title'>Tag'Omatic PDL </div>
+            <div id='title'>Tag'Omatic</div>
             <div><img src="pdl.png" alt="pdl"></div>
         </div>
 
@@ -26,20 +26,20 @@
             <input type="text" name="equipment" id="equipment" placeholder="XV" maxlength="2" class="input">
             <input type="text" name="number" id="number" placeholder="0023" maxlength="4"
                 class="input2"><br><br><br><br>
-            <span>Descrição</span><br><br>
+            <span>Description</span><br><br>
             <textarea rows="5" cols="10" name="description" id="description"
-                placeholder="Qual a localização, fica perto de onde, fica em qual nível, fica em qual módulo, etc."
+                placeholder="Describe where this is located.(close to what?/Which level?...)" 
                 class="input3"></textarea><br><br>
-            <input type="button" value="Adicionar" onclick="cadastrar()"
+            <input type="button" value="Add" onclick="cadastrar()"
                 class="input4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="button" value="Procurar" onclick="search()"
+            <input type="button" value="Search" onclick="search()"
                 class="input4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="button" value="Remover" onclick="removeTag()" class="input4"><br><br><br><br>
-            <input type="button" value="BackUp" onclick="localStorageBackup()" class="input4">
+            <input type="button" value="Remove" onclick="removeTag()" class="input4"><br><br><br><br>
+            <input type="button" value="Backup" onclick="localStorageBackup()" class="input4">
             <input type="button" value="Restore" onclick="localStorageRestore()" class="input4">
-            <input type="button" value="clear" onclick="localStorageClear()" class="input4"><br><br><br><br>
+            <input type="button" value="Clear" onclick="localStorageClear()" class="input4"><br><br><br><br>
 
-            <input id="showHideTable" type="button" value="Ver Tabela" onclick="openTable()" class="input5">
+            <input id="showHideTable" type="button" value="Show Table" onclick="openTable()" class="input5">
         </div>
 
         <div id="tableplace"></div>
@@ -103,7 +103,7 @@
                 alert("Tag adicionado com sucesso !");
                 clearTable();
                 createTable();
-                document.getElementById("showHideTable").value = "Esconder tabela";
+                document.getElementById("showHideTable").value = "Hide Table";
 
             }
             else {
@@ -121,12 +121,12 @@
     }
 
     function openTable() {
-        if (document.getElementById("showHideTable").value == "Esconder tabela") {
-            document.getElementById("showHideTable").value = "Ver Tabela";
+        if (document.getElementById("showHideTable").value == "Hide Table") {
+            document.getElementById("showHideTable").value = "Show Table";
             clearTable();
         }
         else {
-            document.getElementById("showHideTable").value = "Esconder tabela";
+            document.getElementById("showHideTable").value = "Hide Table";
             clearTable();
             createTable();
         }
@@ -139,7 +139,7 @@
 
         clearTable();
         createTable();
-        document.getElementById("showHideTable").value = "Esconder tabela";
+        document.getElementById("showHideTable").value = "Hide Table";
 
 
         let system = document.getElementById('system').value;
@@ -277,7 +277,7 @@
         }
         clearTable();
         createTable();
-        document.getElementById("showHideTable").value = "Esconder tabela";
+        document.getElementById("showHideTable").value = "Hide Table";
 
 
     }
