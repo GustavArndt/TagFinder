@@ -1,0 +1,374 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Tag'Omatic PDL</title>
+</head>
+
+<body>
+    <header>
+        <div id="logo">
+            <div id='title'>Tag'Omatic PDL </div>
+            <div><img src="pdl.png" alt="pdl"></div>
+        </div>
+
+        <div id='madeBy'>by Gustavo Arndt </div>
+
+    </header>
+
+    <div class="content">
+        <div class="inputs">
+            <span>TAG</span><br><br>
+            <input type="text" name="system" id="system" placeholder="45" maxlength="2" class="input">
+            <input type="text" name="equipment" id="equipment" placeholder="XV" maxlength="2" class="input">
+            <input type="text" name="number" id="number" placeholder="0023" maxlength="4"
+                class="input2"><br><br><br><br>
+            <span>Descrição</span><br><br>
+            <textarea rows="5" cols="10" name="description" id="description"
+                placeholder="Qual a localização, fica perto de onde, fica em qual nível, fica em qual módulo, etc."
+                class="input3"></textarea><br><br>
+            <input type="button" value="Adicionar" onclick="cadastrar()"
+                class="input4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="button" value="Procurar" onclick="search()"
+                class="input4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="button" value="Remover" onclick="removeTag()" class="input4"><br><br><br><br>
+            <input type="button" value="BackUp" onclick="localStorageBackup()" class="input4">
+            <input type="button" value="Restore" onclick="localStorageRestore()" class="input4">
+            <input type="button" value="clear" onclick="localStorageClear()" class="input4"><br><br><br><br>
+
+            <input id="showHideTable" type="button" value="Ver Tabela" onclick="openTable()" class="input5">
+        </div>
+
+        <div id="tableplace"></div>
+
+    </div>
+
+</body>
+<script>
+
+
+
+    /*This  first iteration sets id equals the last id value + 1, otherwise it would 
+    brings problems with the table mounting*/
+    let array3 = [];
+    array3.push(0);
+    for (let s = 0; s < localStorage.length; s++) {
+
+        if (localStorage.key(s) == null) {
+            s -= 1;
+        }
+        else {
+            array3.push(localStorage.key(s));
+            array3.sort(function (a, b) { return a - b });
+        }
+    }
+
+    let id = Math.max(...array3) + 1;
+
+    let identificadorDeNomes = 0;
+    let sys = false;
+
+
+    /*This function allows to add new tags*/
+    function cadastrar() {
+        clearTable();
+        //set the variables
+        let system = document.getElementById('system').value;
+        let equipment = document.getElementById('equipment').value;
+        let number = document.getElementById('number').value;
+        let fullTag = system + "-" + equipment + "-" + number;
+        fullTag = fullTag.toUpperCase();
+        let description = document.getElementById('description').value;
+        let myObject = JSON.stringify({ tag: fullTag, desc: description });
+
+        systemBoundaries(system);//Avaluate the system numbers
+        if (sys == true) {
+
+            //This "for" avaluate if the tag already exists, otherwise it will add the new tag
+            for (let c = 0; c < localStorage.length; c++) {
+
+                if (fullTag == JSON.parse(localStorage.getItem(localStorage.key(c))).tag) {
+
+                    identificadorDeNomes += 1;
+
+                }
+
+            }
+            if (identificadorDeNomes == 0) {
+                localStorage.setItem(id, myObject);
+                id += 1;
+                alert("Tag adicionado com sucesso !");
+                clearTable();
+                createTable();
+                document.getElementById("showHideTable").value = "Esconder tabela";
+
+            }
+            else {
+
+                alert("Esse tag ja existe !");
+                identificadorDeNomes = 0;
+            }
+
+
+        }
+        else {
+            alert("Esse sistema não existe");
+        }
+
+    }
+
+    function openTable() {
+        if (document.getElementById("showHideTable").value == "Esconder tabela") {
+            document.getElementById("showHideTable").value = "Ver Tabela";
+            clearTable();
+        }
+        else {
+            document.getElementById("showHideTable").value = "Esconder tabela";
+            clearTable();
+            createTable();
+        }
+
+
+
+    }
+
+    function search() {
+
+        clearTable();
+        createTable();
+        document.getElementById("showHideTable").value = "Esconder tabela";
+
+
+        let system = document.getElementById('system').value;
+        let equipment = document.getElementById('equipment').value;
+        let number = document.getElementById('number').value;
+        let fullTag = system + "-" + equipment + "-" + number;
+        fullTag = fullTag.toUpperCase();
+        let doesExist = false;
+        //Underline the searched line
+        const tableMounted = document.getElementById("tabelanova");
+        for (let r = 0; r < tableMounted.rows.length; r++) {//iterates all lines
+
+            for (let l = 0; l < tableMounted.rows[r].cells.length; l++) {//iterates each cells inside the line
+
+                if (fullTag == tableMounted.rows[r].cells[l].innerHTML) {//Underline the line if the cell matches
+                    tableMounted.rows[r].setAttribute("class", "highlighted");
+                    window.location.href = `#${fullTag}`;//Brings you to the underlined tag
+                    doesExist = true;
+                }
+
+            }
+
+        }
+
+        if (doesExist == false) {
+            alert("Tag não encontrado !");
+        }
+
+    }
+
+    function createTable() {
+        let i = 0;
+        let j = 0;
+        let array = []; //This array will help in order tu sort the keys
+
+        const table = document.createElement('table');
+        table.setAttribute("id", "tabelanova");
+
+        document.getElementById("tableplace").appendChild(table);
+
+        //creates the table title
+        const tableHeader = document.createElement('tr');
+        const indexHeader = document.createElement('th');
+        const tagHeader = document.createElement('th');
+        const descriptionHeader = document.createElement('th');
+        indexHeader.innerHTML = "índice";
+        tagHeader.innerHTML = "TAG";
+        descriptionHeader.innerHTML = "Descrição";
+        document.getElementById("tabelanova").appendChild(tableHeader);
+        tableHeader.appendChild(indexHeader);
+        tableHeader.appendChild(tagHeader);
+        tableHeader.appendChild(descriptionHeader);
+
+
+        //Here the array is sorted with a crescent order of the keys
+        for (i; i < localStorage.length; i++) {
+
+            if (localStorage.key(i) == null) {
+                i -= 1;
+            }
+            else {
+                array.push(localStorage.key(i));
+                array.sort(function (a, b) { return a - b });
+            }
+        }
+
+        /*
+         This loop creates and sort the table according the crescent values of the keys.
+         This was code because the keys of localstorage dont follow a right order
+         */
+        for (j; j < array.length; j++) {
+
+            //creates the first column
+            const newLine = document.createElement("tr");
+            const column1 = document.createElement("td");
+            column1.innerHTML = j;
+            newLine.appendChild(column1);
+
+            //creates the second column
+            const column2 = document.createElement("td");
+            column2.setAttribute("id", JSON.parse(localStorage.getItem(array[j])).tag);
+            column2.innerHTML = JSON.parse(localStorage.getItem(array[j])).tag;
+            newLine.appendChild(column2);
+
+            //creates the third column
+            const column3 = document.createElement("td")
+            column3.innerHTML = JSON.parse(localStorage.getItem(array[j])).desc;
+            newLine.appendChild(column3);
+
+            //add the line to the table
+            document.getElementById("tabelanova").appendChild(newLine);
+        }
+
+
+    }
+
+    function clearTable() {
+        document.getElementById("tableplace").innerHTML = "";
+    }
+
+    function systemBoundaries(s) {
+        if (s == 20 || s == 23 || s == 24 || s == 26
+            || s == 40 || s == 41 || s == 42 || s == 43
+            || s == 44 || s == 45 || s == 47 || s == 50
+            || s == 53 || s == 56 || s == 57 || s == 62
+            || s == 63 || s == 64 || s == 71 || s == 80) {
+            return sys = true;
+        }
+        else {
+            return sys = false;
+        }
+    }
+
+    function removeTag() {
+
+        let rem = 0;
+        let system = document.getElementById('system').value;
+        let equipment = document.getElementById('equipment').value;
+        let number = document.getElementById('number').value;
+        let fullTag = system + "-" + equipment + "-" + number;
+        fullTag = fullTag.toUpperCase();
+
+        for (let rem = 0; rem < localStorage.length; rem++) {
+            if (localStorage.key(rem) == null) {
+                rem -= 1;
+            }
+            else {
+                if (fullTag == JSON.parse(localStorage.getItem(localStorage.key(rem))).tag) {
+
+                    localStorage.removeItem(localStorage.key(rem));
+
+                }
+            }
+
+        }
+        clearTable();
+        createTable();
+        document.getElementById("showHideTable").value = "Esconder tabela";
+
+
+    }
+
+    /* From here, code copied from:
+     https://www.tomas-dvorak.cz/localstorage-backup/
+     
+     -this is used to backup, restore and clear localStorage
+     */
+
+    function localStorageBackup(){
+    var backup = {};
+    for (i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+      var value = localStorage.getItem(key);
+      backup[key] = escape(encodeURIComponent(value));
+    }
+    var json = JSON.stringify(backup);
+    var base = btoa(json);
+    var href = 'data:text/javascript;charset=utf-8;base64,' + base;
+    var link = document.createElement('a');
+    link.setAttribute('download', 'backup.json');
+    link.setAttribute('href', href);
+    document.querySelector('body').appendChild(link);
+    link.click();
+    link.remove();
+  };
+  
+    function localStorageRestore() {
+    var t = document.createElement('div');
+    var a = document.createElement('a');
+    a.appendChild(document.createTextNode('X'));
+    a.setAttribute('href', '#');
+  
+    a.style.position = 'absolute';
+    a.style.top = '10px';
+    a.style.right = '10px';
+    a.style['text-decoration'] = 'none';
+    a.style.color = '#fff';
+    t.appendChild(a);
+    a.onclick = function() {
+        t.remove();
+    };
+    t.style.width = '50%';
+    t.style.position = 'absolute';
+    t.style.top = '25%';
+    t.style.left = '25%';
+    t.style['background-color'] = 'gray';
+    t.style['text-align'] = 'center';
+    t.style.padding = '50px';
+    t.style.color = '#fff';
+    t.style['z-index'] = 10000;
+  
+    var l = document.createElement('input');
+    l.setAttribute('type', 'file');
+    l.setAttribute('id', 'fileinput');
+    l.onchange = function(e) {
+        t.remove();
+        var f = e.target.files[0];
+        if (f) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var text = e.target.result;
+                var backup = JSON.parse(text);
+                for (var key in backup){
+                   var value = decodeURIComponent(unescape(backup[key]));
+                   window.localStorage.setItem(key, value);
+                 }
+                alert('Imported ' + Object.keys(backup).length + ' items from backup.')
+            };
+            reader.readAsText(f);
+        } else {
+          alert('Failed to load file');
+        }
+    };
+    var a = document.createElement('h3');
+    a.appendChild(document.createTextNode('Select file with backup'));
+    t.appendChild(a);
+    t.appendChild(l);
+    document.querySelector('body').appendChild(t);
+  };
+  
+  function localStorageClear(){
+    if(window.confirm('Do you really want to delete all ' + localStorage.length + ' localStorage items of this website?')) {
+      localStorage.clear();
+    }
+  }
+  
+
+
+
+</script>
+
+</html>
