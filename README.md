@@ -26,6 +26,7 @@ It was used: HTML + CSS + JAVASCRIPT + LOCALSTORAGE + PYTHON
  ************
  
  *Buttons
+ 
  	*Show table: opens and closes the current list.
  	*Add: add the tag and description of a certain equipment to the current list.
  	*Search: searches for a certain equipment based on the tag filled in the tag inputs.
@@ -35,6 +36,7 @@ It was used: HTML + CSS + JAVASCRIPT + LOCALSTORAGE + PYTHON
  	*Clear: clears the current list.
  	
  *Inputs
+ 
  	*TAG inputs: To create, remove or edit a equipment you have to fill the tag inputs. The format of the tag code
  	in my company is "nn-ll-nnnn"(n:number;l:leter). But fell free to save in the format you want or fell
  	free to change the code to change the inputs.
@@ -56,7 +58,6 @@ This app was made focused in efficiency so I didn't pay much attention to stylin
 NOTES
 *****
 
-Feel free to clone the repository: https://github.com/GustavArndt/TagFinder.git
-Feel free to change the code.
-
-Feel free to adapt to your own professional area. 
+*Feel free to clone the repository: https://github.com/GustavArndt/TagFinder.git
+*Feel free to change the code.
+*Feel free to adapt to your own professional area. 
