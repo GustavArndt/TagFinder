@@ -24,6 +24,7 @@ It was used: HTML + CSS + JAVASCRIPT + LOCALSTORAGE + PYTHON
  ------------
  INSTRUCTIONS
  ************
+ - To initialize the app just open "index.html"
  
  *Buttons
  
